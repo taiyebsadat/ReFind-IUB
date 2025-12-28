@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div id="loading-overlay" class="d-none" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+    <div class="spinner-border text-iub-blue" role="status" style="width: 3rem; height: 3rem;">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+    <h5 class="mt-3 fw-bold text-dark">Connecting to IUB Portal...</h5>
+    <p class="text-muted small">Please wait while we redirect you safely.</p>
+</div>
+
+<div class="row justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="col-md-5">
+        <div class="card shadow-lg border-0 text-center p-5">
+            <div class="mb-4">
+                <i class="bi bi-shield-check text-iub-blue" style="font-size: 3rem;"></i>
+            </div>
+            <h3 class="fw-bold">ReFind Authentication</h3>
+            <p class="text-muted">Securely sign in with your IUB credentials to manage your reports.</p>
+            
+            <div class="d-grid gap-2 mt-4">
+                <a href="{{ url_for('login') }}" id="login-btn" class="btn btn-iub-blue btn-lg fw-bold py-3 shadow-sm">
+                    Continue to IRAS Login
+                </a>
+            </div>
+            
+            <p class="mt-4 small text-muted">
+                <i class="bi bi-info-circle me-1"></i> 
+                You will be redirected to the secure university login proxy.
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('login-btn').addEventListener('click', function() {
+        // Show the overlay
+        document.getElementById('loading-overlay').classList.remove('d-none');
+        document.getElementById('loading-overlay').style.display = 'flex';
+    });
+</script>
+
+{% endblock %}

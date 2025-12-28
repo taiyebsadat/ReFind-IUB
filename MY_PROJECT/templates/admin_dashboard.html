@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Admin & Security Dashboard</h2>
+
+    <div class="card border-danger mb-4">
+        <div class="card-header bg-danger text-white">🚩 Aging Report (Unclaimed > 30 Days)</div>
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Posted Date</th>
+                        <th>Days Unclaimed</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in aging %}
+                    <tr>
+                        <td>{{ item.item_name }}</td>
+                        <td>{{ item.date_posted.strftime('%Y-%m-%d') }}</td>
+                        <td><span class="badge bg-danger">30+ Days</span></td>
+                        <td><button class="btn btn-sm btn-warning">Mark for Donation</button></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,52 @@
+/* Custom Styles for ReFind IUB */
+:root {
+    --iub-blue: #003366; 
+    --iub-red: #cc0000;
+}
+
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.bg-lost { 
+    background-color: #FF8C00 !important; /* Your current background color */
+    color: #000000 !important;            /* This changes the text from white to BLACK */
+    font-weight: bold;                    /* Optional: makes it easier to read */
+}
+
+/* Navbar branding */
+.navbar {
+    background-color: var(--iub-blue) !important;
+    border-bottom: 4px solid var(--iub-red);
+}
+
+/* Modern Card Design */
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+/* Button Styling */
+.btn-primary {
+    background-color: var(--iub-blue);
+    border: none;
+    padding: 10px 20px;
+}
+
+.btn-primary:hover {
+    background-color: #002244;
+}
+
+footer {
+    margin-top: auto;
+}
