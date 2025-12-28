@@ -1,0 +1,187 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="bi bi-person-circle text-primary" style="font-size: 4rem;"></i>
+                    </div>
+                    <h5 class="fw-bold mb-1">{{ session.get('user_name', 'IUB Student') }}</h5>
+                    <p class="text-muted small mb-0">ID: {{ session['user_id'] }}</p>
+                    <span class="badge rounded-pill bg-light text-dark border mt-2">Verified Member</span>
+                    <hr>
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('report', report_type='Lost') }}" class="btn btn-maroon btn-sm shadow-sm text-white">
+                            <i class="bi bi-search me-1"></i> Report Lost
+                        </a>
+                        <a href="{{ url_for('report', report_type='Found') }}" class="btn btn-iub-blue btn-sm shadow-sm text-white">
+                            <i class="bi bi-plus-lg me-1"></i> Report Found
+                        </a>                    
+                    </div>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-3"><i class="bi bi-patch-question me-2"></i>My Questions</h6>
+                    {% if my_questions %}
+                        {% for q in my_questions %}
+                        <div class="border-bottom pb-2 mb-2">
+                            <small class="d-block text-dark"><strong>Q:</strong> {{ q.question }}</small>
+                            {% if q.answer %}
+                                <small class="d-block text-success"><strong>A:</strong> {{ q.answer }}</small>
+                            {% else %}
+                                <small class="text-muted italic">Waiting for response...</small>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted small">You haven't asked any questions yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="card border-0 shadow-sm mb-4" style="background: #ffffff; border-left: 5px solid #003366 !important;">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3">Find an Item</h5>
+                    <form action="{{ url_for('search') }}" method="GET" class="d-flex gap-2">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                            <input type="search" name="q" class="form-control border-start-0 py-2" placeholder="Search for ID cards, wallets, keys..." required>
+                        </div>
+                        <button type="submit" class="btn btn-iub-blue px-4 fw-bold">Search</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <h2 class="fw-bold text-dark">Hello, {{ session.get('user_name', 'Student').split(' ')[0] }}!</h2>
+                <p class="text-muted">Manage your reports and check for updates below.</p>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-5">
+                <div class="card-body">
+                    <h4 class="fw-bold mb-4 text-dark"><i class="bi bi-chat-left-text-fill me-2 text-primary"></i>Claim Messages</h4>
+                    {% if messages %}
+                        {% for msg in messages %}
+                        <div class="alert alert-white border shadow-sm p-3 mb-3">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <span class="badge bg-iub-blue mb-2">From: {{ msg.sender_id }}</span>
+                                    <p class="mb-1 text-dark"><strong>{{ msg.message }}</strong></p>
+                                    <small class="text-muted"><i class="bi bi-clock me-1"></i>{{ msg.timestamp.strftime('%d %b, %I:%M %p') }}</small>
+                                </div>
+                                <div class="text-end">
+                                    <a href="{{ url_for('item_detail', item_id=msg.item_id) }}" class="btn btn-sm btn-outline-primary mb-2">View Item</a>
+                                    <form action="{{ url_for('delete_message', msg_id=msg.id) }}" method="POST">
+                                        <button type="submit" class="btn btn-link text-danger p-0 small text-decoration-none">Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center py-4">
+                            <p class="text-muted mt-2">No claim requests yet.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-5" style="border-top: 4px solid #ffc107 !important;">
+                <div class="card-body">
+                    <h4 class="fw-bold mb-4 text-dark"><i class="bi bi-question-diamond-fill me-2 text-warning"></i>Questions for You</h4>
+                    {% if incoming_requests %}
+                        {% for req in incoming_requests %}
+                        <div class="bg-light p-3 rounded border mb-3">
+                            <p class="mb-1"><strong>User {{ req.sender_id }}</strong> asked about your report:</p>
+                            <p class="text-dark">"{{ req.question }}"</p>
+                            {% if not req.answer %}
+                            <form action="{{ url_for('reply_info', req_id=req.id) }}" method="POST" class="d-flex gap-2">
+                                <input type="text" name="answer" class="form-control form-control-sm" placeholder="Type your answer here..." required>
+                                <button class="btn btn-sm btn-success px-3">Reply</button>
+                            </form>
+                            {% else %}
+                            <div class="mt-2 pt-2 border-top">
+                                <span class="badge bg-success mb-1">Your Answered Sent</span>
+                                <p class="small text-muted mb-0">"{{ req.answer }}"</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted text-center">No info requests received.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="mb-5">
+                <h4 class="fw-bold mb-3 text-dark">My Reports</h4>
+                <div class="table-responsive bg-white shadow-sm rounded p-3">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Item Name</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in my_reports %}
+                            <tr>
+                                <td><a href="{{ url_for('item_detail', item_id=item.id) }}" class="text-decoration-none fw-bold text-dark">{{ item.item_name }}</a></td>
+                                <td><span class="badge {% if item.type == 'Lost' %}bg-danger{% else %}bg-success{% endif %}">{{ item.type }}</span></td>
+                                <td>
+                                    {% if item.status == 'Resolved' %}
+                                        <span class="text-success small fw-bold"><i class="bi bi-check-circle-fill"></i> Resolved</span>
+                                    {% else %}
+                                        <span class="text-warning small fw-bold"><i class="bi bi-clock-history"></i> Active</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">
+                                    {% if item.status != 'Resolved' %}
+                                    <div class="btn-group">
+                                        <a href="{{ url_for('edit_item', item_id=item.id) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                                        <form action="{{ url_for('resolve_item', item_id=item.id) }}" method="POST" class="d-inline">
+                                            <button class="btn btn-sm btn-success text-white ms-1">Resolve</button>
+                                        </form>
+                                    </div>
+                                    {% else %}
+                                    <span class="text-muted small">Closed</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="mb-5">
+                <h4 class="fw-bold mb-3 text-dark">Recent Reports on Campus</h4>
+                <div class="row g-3">
+                    {% for item in recent_items %}
+                    <div class="col-md-6">
+                        <div class="card border-0 shadow-sm h-100 p-2">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h6 class="fw-bold mb-0">{{ item.item_name }}</h6>
+                                    <span class="badge {% if item.type == 'Lost' %}bg-danger{% else %}bg-success{% endif %} btn-sm">{{ item.type }}</span>
+                                </div>
+                                <p class="small text-muted mt-2 mb-2"><i class="bi bi-geo-alt"></i> {{ item.location }}</p>
+                                <a href="{{ url_for('item_detail', item_id=item.id) }}" class="btn btn-link btn-sm p-0 text-primary text-decoration-none">View Details →</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
